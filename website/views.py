@@ -11,7 +11,7 @@ views = Blueprint("views", __name__)
 
 api_key = getenv('API_KEY')
 
-openai.api_key = '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'
+openai.api_key = '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'
 
 
 @views.route("/")
@@ -147,26 +147,65 @@ def like(post_id):
 @login_required
 def notesbuddy():
     if request.method == "POST":
-        if olddata == data:
 
-            data = request.form['name']
-            data1 = f'What are some key points I should know when studying about {data} ?'
-            response = openai.Completion.create(
-            engine="davinci-instruct-beta",
-            prompt=data1,
-            temperature=1,
-            max_tokens=64,
-            top_p=1,
-            frequency_penalty=0,
-            presence_penalty=0
-            )
+        data = request.form['name']
+        data1 = f'What are some key points I should know when studying about {data} ?'
+        response = openai.Completion.create(
+        engine="davinci-instruct-beta",
+        prompt=data1,
+        temperature=1,
+        max_tokens=64,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0
+        )
 
-            data = response.choices[0]['text']
-            return data
+        data = response.choices[0]['text']
         return render_template('notebuddy.html',user=current_user,data=data)
     else:
         return render_template('notebuddy.html',user=current_user)
 
+@views.route("/grammer", methods=['GET', 'POST'])
+@login_required
+def grammer():
+    if request.method == "POST":
+        data = request.form['name']
+        data1 = f'Original:{data}.\nStandard American English:'
+        response = openai.Completion.create(
+        engine="davinci",
+        prompt=data1,
+        temperature=0,
+        max_tokens=60,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0,
+        stop=["\n"]
+        )
+
+        data = response.choices[0]['text']
+        return render_template('grammer.html',user=current_user,data=data)
+    else:
+        return render_template('grammer.html',user=current_user)
+
+@views.route("/essay",methods=['GET','POST'])
+@login_required
+def essay():
+    if request.method == 'POST':
+        data = request.form['name']
+        response = openai.Completion.create(
+        engine="davinci",
+        prompt=f"Create an outline for an essay about {data}:\n\nI: Introduction",
+        temperature=0.7,
+        max_tokens=539,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0
+        )
+
+        data = response.choices[0]['text']
+        return render_template('essay.html',user=current_user,data=data)
+    else:
+        return render_template('essay.html',user=current_user)
 
 
 
