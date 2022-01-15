@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<form  method='POST'>
+    <input type="text" id="name" name="name" placeholder="ENTER THE TOPIC"> <br>
+        <button type="submit" class="submit">Submit</button>
+    </form>
+<div class="output">
+    {{data}}
+</div>
+
+{% endblock %}
