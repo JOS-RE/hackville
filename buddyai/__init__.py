@@ -39,4 +39,6 @@ def create_database(app):
         db.create_all(app=app)
         print("Created database!")
 
+from buddyai import views
+
 app = create_app()
