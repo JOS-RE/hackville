@@ -1,0 +1,83 @@
+{%extends "base.html" %}
+{%block content%}
+<style>
+    .head1 {
+        position: absolute;
+        width: 949px;
+        height: 87px;
+        left: 50%;
+        top: 38%;
+        transform: translate(-50%, -50%);
+
+
+        font-family: Open Sans;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 35px;
+        line-height: 48px;
+        text-align: center;
+
+        color: #000000;
+    }
+
+    .btn-hello {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        background: #5D5FEF;
+        width: 230px;
+        height: 80px;
+        border: none;
+        transform: translate(-50%, -50%);
+    }
+
+    .btn-hello:hover {
+        background: linear-gradient(to right, rgb(35, 173, 236), rgb(170, 30, 170));
+
+    }
+
+    .btn-hello a {
+        font-family: 'Open Sans', sans-serif;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 30px;
+        line-height: 41px;
+        text-align: center;
+        text-decoration: none;
+
+        color: #FFFFFF;
+
+    }
+
+    .img-1 {
+        position: absolute;
+        z-index: -1;
+        left: 90%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+
+    }
+
+    .img-1 img {
+        width: 390px;
+    
+    }
+    .features{
+        background-color:#5D5FEF ;
+        color: #FFFFFF;
+    }
+    .second-title{
+        color: #FFFFFF;
+    }
+</style>
+<section>
+<div class="head1">
+    Want to kickstart your <span style="  text-decoration: underline;"> College Journey</span> with some <span
+        style="color:#5D5FEF ;"> AI </span>
+</div>
+<button class="btn-hello"> <a href="/tools"> Get Started</a></button>
+<div class="img-1">
+    <img src="{{ url_for('static', filename='img/robot1.png')}}" alt="">
+</div>
+</section>
+{% endblock %}

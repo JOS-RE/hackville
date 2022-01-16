@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+.dashboard-title{
+    text-align: center;
+    margin-top: 3rem;
+    font-family: 'Open Sans' sans-serif;
+    color: #181818;
+    font-size: 3rem;
+
+}
+.username{
+    font-family: 'Open Sans' sans-serif;
+    font-size: 2rem;
+    text-align: center;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+.email{
+    font-family: 'Open Sans' sans-serif;
+    font-size: 2rem;
+    text-align: center;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+.college{
+    font-family: 'Open Sans' sans-serif;
+    font-size: 2rem;
+    text-align: center;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+</style>
+<div class="dashboard-title">
+    DASHBOARD
+</div>
+<div>
+  <div class="username"> Username - {{name}} </div>
+  <div class="email"> Email - {{email}} </div>
+  <div class="college"> College - {{college}} </div>
+</div>
+{% endblock %}

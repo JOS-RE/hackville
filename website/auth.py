@@ -1,8 +1,16 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash
+from flask import Blueprint, render_template, redirect, url_for, request, flash , send_file
 from . import db
 from .models import User
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
+import base64
+import requests
+
+import os
+from datetime import datetime
+from base64 import b64encode
+import base64
+from io import BytesIO
 
 auth = Blueprint("auth", __name__)
 
@@ -18,7 +26,7 @@ def login():
             if check_password_hash(user.password, password):
                 flash("Logged in!", category='success')
                 login_user(user, remember=True)
-                return redirect(url_for('views.home'))
+                return redirect(url_for('views.tools'))
             else:
                 flash('Password is incorrect.', category='error')
         else:
@@ -32,6 +40,7 @@ def sign_up():
     if request.method == 'POST':
         email = request.form.get("email")
         username = request.form.get("username")
+        college = request.form.get("college")
         password1 = request.form.get("password1")
         password2 = request.form.get("password2")
 
@@ -47,7 +56,7 @@ def sign_up():
         elif len(email) < 4:
             flash("Email is invalid.", category='error')
         else:
-            new_user = User(email=email, username=username, password=generate_password_hash(
+            new_user = User(email=email,college = college, username=username, password=generate_password_hash(
                 password1, method='sha256'))
             db.session.add(new_user)
             db.session.commit()
@@ -56,6 +65,7 @@ def sign_up():
             return redirect(url_for('views.home'))
 
     return render_template("signup.html", user=current_user)
+
 
 
 @auth.route("/logout")

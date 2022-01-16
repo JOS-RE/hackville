@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify
+from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify, send_file
 from flask_login import login_required, current_user
 from .models import Post, User, Comment, Like
 from . import db
@@ -11,10 +11,14 @@ views = Blueprint("views", __name__)
 
 api_key = getenv('API_KEY')
 
-openai.api_key = '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'
+openai.api_key = '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'
 
 
 @views.route("/")
+def index():
+    return render_template("index.html", user=current_user)
+
+
 @views.route("/home")
 @login_required
 def home():
@@ -143,7 +147,8 @@ def like(post_id):
 
     return render_template('notes.html', user=current_user)
 
-@views.route("/notesbuddy" ,methods=['GET', 'POST'])
+
+@views.route("/notesbuddy", methods=['GET', 'POST'])
 @login_required
 def notesbuddy():
     if request.method == "POST":
@@ -151,19 +156,20 @@ def notesbuddy():
         data = request.form['name']
         data1 = f'What are some key points I should know when studying about {data} ?'
         response = openai.Completion.create(
-        engine="davinci-instruct-beta",
-        prompt=data1,
-        temperature=1,
-        max_tokens=64,
-        top_p=1,
-        frequency_penalty=0,
-        presence_penalty=0
+            engine="davinci-instruct-beta",
+            prompt=data1,
+            temperature=1,
+            max_tokens=64,
+            top_p=1,
+            frequency_penalty=0,
+            presence_penalty=0
         )
 
         data = response.choices[0]['text']
-        return render_template('notebuddy.html',user=current_user,data=data)
+        return render_template('notebuddy.html', user=current_user, data=data)
     else:
-        return render_template('notebuddy.html',user=current_user)
+        return render_template('notebuddy.html', user=current_user)
+
 
 @views.route("/grammer", methods=['GET', 'POST'])
 @login_required
@@ -172,40 +178,119 @@ def grammer():
         data = request.form['name']
         data1 = f'Original:{data}.\nStandard American English:'
         response = openai.Completion.create(
-        engine="davinci",
-        prompt=data1,
-        temperature=0,
-        max_tokens=60,
-        top_p=1,
-        frequency_penalty=0,
-        presence_penalty=0,
-        stop=["\n"]
+            engine="davinci",
+            prompt=data1,
+            temperature=0,
+            max_tokens=60,
+            top_p=1,
+            frequency_penalty=0,
+            presence_penalty=0,
+            stop=["\n"]
         )
 
         data = response.choices[0]['text']
-        return render_template('grammer.html',user=current_user,data=data)
+        return render_template('grammer.html', user=current_user, data=data)
     else:
-        return render_template('grammer.html',user=current_user)
+        return render_template('grammer.html', user=current_user)
 
-@views.route("/essay",methods=['GET','POST'])
+
+@views.route("/essay", methods=['GET', 'POST'])
 @login_required
 def essay():
     if request.method == 'POST':
         data = request.form['name']
         response = openai.Completion.create(
-        engine="davinci",
-        prompt=f"Create an outline for an essay about {data}:\n\nI: Introduction",
-        temperature=0.7,
-        max_tokens=539,
-        top_p=1,
-        frequency_penalty=0,
-        presence_penalty=0
+            engine="davinci",
+            prompt=f"Create an outline for an essay about {data}:\n\nI: Introduction",
+            temperature=0.7,
+            max_tokens=539,
+            top_p=1,
+            frequency_penalty=0,
+            presence_penalty=0
         )
 
         data = response.choices[0]['text']
-        return render_template('essay.html',user=current_user,data=data)
+        return render_template('essay.html', user=current_user, data=data)
     else:
-        return render_template('essay.html',user=current_user)
+        return render_template('essay.html', user=current_user)
+
+
+@views.route("/dashboard", methods=['GET', 'POST'])
+@login_required
+def dashboard():
+    return render_template('dashboard.html', user=current_user, email=current_user.email, name=current_user.username, college=current_user.college)
+
+# routing to tools page is user is authenticated else redirect to login page
+
+
+@views.route("/tools", methods=['GET', 'POST'])
+@login_required
+def tools():
+        return render_template('tools.html', user=current_user)
+
+
+@views.route("/interview", methods=['GET', 'POST'])
+@login_required
+def interview():
+    if request.method == 'POST':
+        data = request.form['name']
+        response = openai.Completion.create(
+        engine="davinci-instruct-beta",
+        prompt=f"Create a list of questions for my interview with a {data}\n\n1.",
+        temperature=0.8,
+        max_tokens=64,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0,
+        stop=["\n\n"]
+        )
+
+        data = response.choices[0]['text']
+        return render_template('interview.html', user=current_user, data=data)
+    else:
+        return render_template('interview.html', user=current_user)
+
+
+@views.route('/summery', methods=['GET', 'POST'])
+@login_required
+def summery():
+    if request.method == 'POST':
+        data = request.form['name']
+
+        response = openai.Completion.create(
+        engine="davinci",
+        prompt=f"My second grader asked me what this passage means:\n\"\"\"\n{data}\n\"\"\"\nI rephrased it for him, in plain language a second grader can understand:\n\"\"\"\n",
+        temperature=0.5,
+        max_tokens=100,
+        top_p=1,
+        frequency_penalty=0.2,
+        presence_penalty=0,
+        stop=["\"\"\""]
+        )
+        data = response.choices[0]['text']
+        return render_template('summery.html', user=current_user, data=data)
+    else:
+        return render_template('summery.html', user=current_user)
+
+@views.route('/keyword',methods=['GET','POST'])
+@login_required
+def keyword():
+    if request.method == 'POST':
+        data = request.form['name']
+        response = openai.Completion.create(
+        engine="davinci",
+        prompt=f"Text: {data}\n\nKeywords:",
+        temperature=0.3,
+        max_tokens=60,
+        top_p=1,
+        frequency_penalty=0.8,
+        presence_penalty=0,
+        stop=["\n"]
+        )
+        data = response.choices[0]['text']
+        return render_template('keyword.html', user=current_user, data=data)
+    else:
+        return render_template('keyword.html', user=current_user)
 
 
 
