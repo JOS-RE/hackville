@@ -11,7 +11,7 @@ views = Blueprint("views", __name__)
 
 api_key = getenv('API_KEY')
 
-openai.api_key = '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'
+openai.api_key = api_key
 
 
 @views.route("/")
@@ -145,7 +145,7 @@ def like(post_id):
 #             flash('Note created!', category='success')
 #             return redirect(url_for('views.notes'))
 
-    return render_template('notes.html', user=current_user)
+#
 
 
 @views.route("/notesbuddy", methods=['GET', 'POST'])
@@ -154,12 +154,12 @@ def notesbuddy():
     if request.method == "POST":
 
         data = request.form['name']
-        data1 = f'What are some key points I should know when studying about {data} ?'
+        data1 = f'What are some key points I should know when studying about {data}?'
         response = openai.Completion.create(
             engine="davinci-instruct-beta",
             prompt=data1,
             temperature=1,
-            max_tokens=64,
+            max_tokens=1000,
             top_p=1,
             frequency_penalty=0,
             presence_penalty=0
